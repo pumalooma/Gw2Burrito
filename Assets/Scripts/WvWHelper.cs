@@ -27,7 +27,6 @@ public class WvWHelper : MonoBehaviour {
     private string mObjectivesPath = "objectives.json";
     private string mMatchesPath = "matches.json";
     private string mMapsPath = "maps.json";
-    private List<Gw2World> mWorlds;
     private List<Gw2Objective> mObjectivesList;
     private Dictionary<string,Gw2Objective> mObjectiveMap;
     private Dictionary<int,Gw2Map> mMapTable = new Dictionary<int, Gw2Map>();
@@ -36,7 +35,8 @@ public class WvWHelper : MonoBehaviour {
     private Coroutine mainLoop;
     private bool fullyLoaded = false;
 
-    private static List<int> mValidMapIds = new List<int>() { 38, 95, 96, 1099 };
+	public static List<Gw2World> mWorlds;
+	private static List<int> mValidMapIds = new List<int>() { 38, 95, 96, 1099 };
 
     void Start() {
         ArrayExpander.Expand(transform, 0);
@@ -71,12 +71,9 @@ public class WvWHelper : MonoBehaviour {
         mWorlds = JsonConvert.DeserializeObject<List<Gw2World>>(RestCache.mJsonData);
         
         Debug.Log("Servers: " + mWorlds.Count);
-        
-        serverListDropDown.options.Clear();
-        foreach (var world in mWorlds) {
-            serverListDropDown.options.Add(new Dropdown.OptionData() { text = world.name });
-        }
 
+		RefreshDropDown();
+		
         url = "https://api.guildwars2.com/v2/wvw/objectives?ids=all";
         yield return StartCoroutine(RestCache.Get(mObjectivesPath, url));
         mObjectivesList = JsonConvert.DeserializeObject<List<Gw2Objective>>(RestCache.mJsonData);
@@ -232,4 +229,27 @@ public class WvWHelper : MonoBehaviour {
 
         return string.Format("{0}:{1} RI", timeSpan.Minutes, timeSpan.Seconds);
     }
+
+	public void RefreshDropDown() {
+
+		serverListDropDown.options.Clear();
+
+		string burritoState = Burrito.burritoEnabled ? "Disable Overlay" : "Enable Overlay";
+
+		serverListDropDown.options.Add(new Dropdown.OptionData() { text = burritoState });
+		serverListDropDown.options.Add(new Dropdown.OptionData() { text = "" });
+		serverListDropDown.options.Add(new Dropdown.OptionData() { text = "Exit Burrito" });
+		serverListDropDown.options.Add(new Dropdown.OptionData() { text = "" });
+		
+		int index = 4;
+        foreach(var world in mWorlds)
+		{
+			serverListDropDown.options.Add(new Dropdown.OptionData() { text = world.name });
+
+			if(world.id == Config.Instance.worldId)
+				serverListDropDown.value = index;
+
+			index++;
+		}
+	}
 }

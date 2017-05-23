@@ -17,11 +17,15 @@ public class Config {
             }
             else {
                 instance = new Config() { worldId = 1016 };
-                string jsonData = JsonConvert.SerializeObject(instance);
-                File.WriteAllText("config.json", jsonData);
+				instance.SaveConfig();
             }
 
             return instance;
         }
     }
+
+	public void SaveConfig() {
+		string jsonData = JsonConvert.SerializeObject(this);
+		File.WriteAllText("config.json", jsonData);
+	}
 }

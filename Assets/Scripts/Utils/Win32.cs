@@ -16,9 +16,7 @@ public static class Win32 {
     }
 
     public static readonly IntPtr HWND_TOPMOST = new IntPtr(-1);
-
-    public const uint SWP_SHOWWINDOW = 0x0040;
-
+	
     [DllImport("user32.dll", SetLastError = true)]
     public static extern IntPtr FindWindow (string lpClassName, string lpWindowName);
     [DllImport("user32.dll", SetLastError = true)]
@@ -68,25 +66,35 @@ public static class Win32 {
     private static extern uint DwmExtendFrameIntoClientArea (IntPtr hWnd, ref MARGINS margins);
 
     const int GWL_STYLE = -16;
-    const uint WS_POPUP = 0x80000000;
+	const int GWL_EXSTYLE = -20;
+	const uint WS_POPUP = 0x80000000;
     const uint WS_VISIBLE = 0x10000000;
+	const uint WS_EX_LAYERED = 524288;
+	const uint WS_EX_TRANSPARENT = 32;
 
-    const uint SWP_NOSIZE = 0x0001;
+	const uint SWP_NOSIZE = 0x0001;
     const uint SWP_NOMOVE = 0x0002;
+	const uint SWP_FRAMECHANGED = 0x0020;
+    public const uint SWP_SHOWWINDOW = 0x0040;
 
-    public static readonly IntPtr HWND_NOT_TOPMOST = new IntPtr(-2);
 
-
-
+	
+	public static readonly IntPtr HWND_NOT_TOPMOST = new IntPtr(-2);
+	
     public static void MakeWindowTransparent (IntPtr hwnd) {
         var margins = new MARGINS() { cxLeftWidth = -1 };
 
         SetWindowLong(hwnd, GWL_STYLE, WS_POPUP | WS_VISIBLE);
 
-        // Transparent windows with click through
-        SetWindowLong(hwnd, -20, 524288 | 32); // GWL_EXSTYLE=-20; WS_EX_LAYERED=524288=&h80000, WS_EX_TRANSPARENT=32=0x00000020L
         SetLayeredWindowAttributes(hwnd, 0, 255, 2); // LWA_ALPHA=2
-        SetWindowPos(hwnd, HWND_TOPMOST, 0, 0, 0, 0, 32 | 64 | SWP_NOMOVE | SWP_NOSIZE); // SWP_FRAMECHANGED = 0x0020 (32); //SWP_SHOWWINDOW = 0x0040 (64)
+        SetWindowPos(hwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_FRAMECHANGED | SWP_SHOWWINDOW | SWP_NOMOVE | SWP_NOSIZE);
         DwmExtendFrameIntoClientArea(hwnd, ref margins);
-    }
+	}
+
+	public static void AllowClicking(IntPtr hwnd, bool enable) {
+		if(enable)
+			SetWindowLong(hwnd, GWL_EXSTYLE, 0);
+		else
+			SetWindowLong(hwnd, GWL_EXSTYLE, WS_EX_LAYERED | WS_EX_TRANSPARENT);
+	}
 }

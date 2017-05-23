@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System;
 using System.Collections;
 
@@ -8,13 +8,14 @@ public class WindowTracker : MonoBehaviour {
     private Material m_Material;
 
 #if !UNITY_EDITOR
-    private IntPtr hwndApp;
+    public static IntPtr hwndApp;
 
     // Use this for initialization
     void OnEnable () {
         hwndApp = Win32.FindWindow("UnityWndClass", "GW2 Burrito");
 
         Win32.MakeWindowTransparent(hwndApp);
+		Win32.AllowClicking(hwndApp, false);
 
         StartCoroutine(TrackWindow());
     }
@@ -39,7 +40,7 @@ public class WindowTracker : MonoBehaviour {
     }
 #endif
 
-    void OnRenderImage (RenderTexture from, RenderTexture to) {
+	void OnRenderImage (RenderTexture from, RenderTexture to) {
         Graphics.Blit(from, to, m_Material);
     }
 
