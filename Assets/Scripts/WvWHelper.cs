@@ -69,7 +69,8 @@ public class WvWHelper : MonoBehaviour {
         string url = "https://api.guildwars2.com/v2/worlds?ids=all";
         yield return StartCoroutine(RestCache.Get(mWorldPath, url));
         mWorlds = JsonConvert.DeserializeObject<List<Gw2World>>(RestCache.mJsonData);
-        
+		mWorlds.Sort((x, y) => x.name.CompareTo(y.name));
+
         Debug.Log("Servers: " + mWorlds.Count);
 
 		RefreshDropDown();

@@ -66,6 +66,9 @@ public class Burrito : MonoBehaviour
 
 			Config.Instance.worldId = world.id;
 			Config.Instance.SaveConfig();
+
+			wvwHelper.Reload(0);
+			wvwHelper.Reload(burritoEnabled ? currentMapId : 0);
 		}
 	}
 }
