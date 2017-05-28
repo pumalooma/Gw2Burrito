@@ -59,9 +59,16 @@ public class Gw2MatchMap {
     public List<Gw2MatchObjective> objectives;
 }
 
+public class MatchServers {
+	public int[] red;
+	public int[] blue;
+	public int[] green;
+}
+
 public class Gw2Match {
     public string id;
     public List<Gw2MatchMap> maps;
+	public MatchServers all_worlds;
 }
 
 public class Gw2Map {

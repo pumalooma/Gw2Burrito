@@ -137,6 +137,8 @@ public class WvWHelper : MonoBehaviour {
     private void RefreshMap (Gw2MatchMap mapItem) {
         int index =0;
 
+		SetAppIconColor();
+
         float[][] cr = mMapTable[mapItem.id].continent_rect;
 
         var rect = new Rect(cr[0][0], cr[0][1], cr[1][0] - cr[0][0], cr[1][1] - cr[0][1]);
@@ -252,5 +254,37 @@ public class WvWHelper : MonoBehaviour {
 
 			index++;
 		}
+	}
+
+	private void SetAppIconColor() {
+
+		Image icon = Burrito.instance.dropDown.GetComponent<Image>();
+		
+		for(int ii = 0; ii < mMatch.all_worlds.red.Length; ++ii ) {
+			if(mMatch.all_worlds.red[ii] == Config.Instance.worldId) {
+				icon.color = Color.red;
+				return;
+			}
+        }
+
+		for(int ii = 0; ii < mMatch.all_worlds.green.Length; ++ii)
+		{
+			if(mMatch.all_worlds.green[ii] == Config.Instance.worldId)
+			{
+				icon.color = Color.green;
+				return;
+			}
+		}
+
+		for(int ii = 0; ii < mMatch.all_worlds.blue.Length; ++ii)
+		{
+			if(mMatch.all_worlds.blue[ii] == Config.Instance.worldId)
+			{
+				icon.color = Color.blue;
+				return;
+			}
+		}
+
+		icon.color = Color.white;
 	}
 }

@@ -9,6 +9,12 @@ public class Burrito : MonoBehaviour
 	public Dropdown dropDown;
 
     public static bool burritoEnabled = true;
+
+	public static Burrito instance;
+
+	private void Awake () {
+		instance = this;
+    }
     
     private void Update()
     {
